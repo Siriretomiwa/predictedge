@@ -1,6 +1,9 @@
 {
-  "routes": [
-    { "src": "/admin", "dest": "/admin.html" }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "installCommand": "npm install",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }
-
