@@ -1,69 +1,98 @@
-# PredictEdge – Multi-Sport Predictive Analytics Platform
+# PredictEdge v4 — Dual API Edition
 
-## Local Development
+## What's new
+- **The Odds API** fully wired alongside football-data.org
+- **Odds shown on every pick card** — median decimal odds + bookmaker count
+- **Odds validate model** — if market implied probability conflicts with model, pick is flagged TRAP
+- **Quota tracker** — remaining Odds API calls shown in header
+- **30-min cache** on odds calls to protect your 500 free requests/month
 
-```bash
-npm install
-npm run dev
-```
+---
 
-Open http://localhost:5173
+## You have both keys — add them to Vercel now
 
-## Deploy to Vercel
+Go to: **Vercel → Your Project → Settings → Environment Variables**
 
-### Option A – Vercel CLI (fastest)
-```bash
-npm install -g vercel
-npm install
-vercel
-```
-Follow the prompts. On first deploy it will ask you to log in and name the project.
+| Name | Value |
+|---|---|
+| `FOOTBALL_DATA_KEY` | your football-data.org key |
+| `ODDS_API_KEY` | your The Odds API key |
 
-### Option B – GitHub + Vercel Dashboard
-1. Push this folder to a GitHub repo:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial PredictEdge deploy"
-   git remote add origin https://github.com/YOUR_USERNAME/predictedge.git
-   git push -u origin main
-   ```
-2. Go to https://vercel.com/new
-3. Import your GitHub repo
-4. Vercel auto-detects Vite — just click **Deploy**
+After adding both, go to **Deployments → ··· → Redeploy**.
+Both status chips in the header will turn green.
 
-### Option C – Drag & Drop (no Git needed)
-1. Run locally: `npm install && npm run build`
-2. Go to https://vercel.com/new
-3. Drag the `dist/` folder onto the page
+---
 
-## Project Structure
+## Push to GitHub (to trigger redeploy)
+
+Replace the files in your repo with the contents of this zip.
+If you're using the GitHub web editor:
+
+1. Go to your repo on github.com
+2. Press `.` to open github.dev (VS Code in browser)
+3. Drag the unzipped files in
+4. Commit from the sidebar — Vercel auto-redeploys
+
+---
+
+## How the dual-API prediction works
 
 ```
-predictedge/
-├── index.html          # Entry HTML
-├── vite.config.js      # Vite config
-├── vercel.json         # Vercel build settings
-├── package.json
-└── src/
-    ├── main.jsx        # React root
-    └── App.jsx         # Full application
+football-data.org                The Odds API
+      │                                │
+ Standings → team stats          Pre-match odds
+ Fixtures → upcoming games       (totals, btts)
+ H2H → historical rates               │
+      │                                │
+      └──────────┬─────────────────────┘
+                 │
+            FLE Engine v0.3
+                 │
+         Three-layer analysis:
+         1. Poisson model (season stats)
+         2. H2H blend (Pro+)
+         3. Odds validation
+                 │
+         Conflict detection:
+         - Stats vs H2H > 18% gap → TRAP
+         - Model vs Odds > 20% gap → TRAP
+         - Odds imply < 50% → TRAP
+                 │
+         BANKER / STRONG / SAFE
+         MODERATE / RISKY / TRAP
 ```
 
-## Connecting The Odds API
+---
 
-In `src/App.jsx`, replace the `generateMockPicks()` function with real API calls:
+## Odds API quota management
 
-```js
-const API_KEY = import.meta.env.VITE_ODDS_API_KEY
+Free tier: 500 requests/month.
 
-// Fetch sports
-fetch(`https://api.the-odds-api.com/v4/sports/?apiKey=${API_KEY}`)
+The app fetches odds once per competition per "Generate" click (not per fixture).
+30-minute in-memory cache means repeated clicks don't burn quota.
 
-// Fetch odds for a sport
-fetch(`https://api.the-odds-api.com/v4/sports/soccer_epl/odds/?apiKey=${API_KEY}&regions=eu&markets=totals,btts`)
+With 3 competitions selected: 3 requests per Generate click.
+At daily use: ~90 requests/month, well within free tier.
+
+---
+
+## Project structure
+
 ```
+api/
+  football/
+    competitions.js  ← football-data.org
+    fixtures.js
+    standings.js
+    h2h.js
+  odds/
+    odds.js          ← The Odds API (NEW)
 
-Add your key to Vercel as an environment variable:
-- Name: `VITE_ODDS_API_KEY`
-- Value: your key from the-odds-api.com
+src/
+  App.jsx            ← Full UI with odds display
+  apiClient.js       ← Fetch calls (football + odds)
+  providers.js       ← Both providers now active
+  oddsKeyMap.js      ← Maps comp codes to odds sport keys (NEW)
+  tiers.js           ← FREE / PRO / ELITE
+  engines/fle.js     ← v0.3 with odds layer (NEW)
+```
