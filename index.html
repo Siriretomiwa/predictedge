@@ -3,61 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PredictEdge — AI Sports Intelligence</title>
-    <meta name="description" content="AI-powered football predictions backed by real data. BANKER picks, odds validation, and live results tracking." />
+    <title>PredictEdge — The Intelligence Layer for Football Bettors</title>
+    <meta name="description" content="Real data. Real math. Real edge. Poisson modelling + live odds validation on every match." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { scroll-behavior: smooth; }
-      body { background: #060A07; color: #E8EDE9; font-family: 'Syne', sans-serif; -webkit-font-smoothing: antialiased; }
-      ::-webkit-scrollbar { width: 6px; }
-      ::-webkit-scrollbar-track { background: #060A07; }
-      ::-webkit-scrollbar-thumb { background: #1A2E1D; border-radius: 3px; }
-
       :root {
-        --green-vivid: #00FF6A;
-        --green-mid: #00C94E;
-        --green-dark: #006B28;
-        --green-deep: #0A1F0D;
-        --green-muted: #1A3320;
-        --obsidian: #060A07;
-        --surface: #0D1710;
-        --surface-2: #131F16;
-        --surface-3: #1A2B1E;
-        --border: #1E2F21;
-        --border-bright: #2A4030;
-        --text-primary: #E8EDE9;
-        --text-secondary: #8FA896;
-        --text-muted: #4A6050;
-        --gold: #F0C040;
-        --red: #FF3B3B;
-        --blue: #40B4FF;
-        --font-display: 'Instrument Serif', serif;
-        --font-ui: 'Syne', sans-serif;
-        --font-mono: 'JetBrains Mono', monospace;
+        --green:#00FF6A; --green-mid:#00C94E; --green-dark:#005F28; --green-deep:#071309; --green-dim:#0D2414;
+        --obsidian:#050906; --surface:#0C1410; --surface-2:#121C15; --surface-3:#192319;
+        --border:#1C2B1E; --border-hi:#274030;
+        --text-1:#EBF0EC; --text-2:#8BA090; --text-3:#4A6050;
+        --gold:#EAB840; --red:#FF4040; --blue:#38B2FF;
+        --font-serif:'Instrument Serif',Georgia,serif;
+        --font-sans:'Syne',system-ui,sans-serif;
+        --font-mono:'JetBrains Mono',monospace;
+        --radius:10px; --shadow-g:0 0 32px rgba(0,255,106,.15);
       }
-
-      @keyframes pulse-glow {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-      }
-      @keyframes slide-up {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      @keyframes fade-in {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-      }
-      @keyframes spin {
-        to { transform: rotate(360deg); }
-      }
+      body { background:var(--obsidian); color:var(--text-1); font-family:var(--font-sans); -webkit-font-smoothing:antialiased; }
+      ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--obsidian)} ::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+      input,textarea{font-family:var(--font-sans);background:var(--surface-2);border:1px solid var(--border);color:var(--text-1);outline:none;transition:border-color .15s}
+      input:focus,textarea:focus{border-color:var(--green)!important}
+      @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+      @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+      @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+      @keyframes spin{to{transform:rotate(360deg)}}
+      @keyframes glow{0%,100%{box-shadow:0 0 12px rgba(0,255,106,.2)}50%{box-shadow:0 0 28px rgba(0,255,106,.5)}}
+      @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+      .btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--green);color:#000;border:none;border-radius:var(--radius);font-family:var(--font-sans);font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+      .btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:var(--shadow-g)}
+      .btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--text-2);border:1px solid var(--border-hi);border-radius:var(--radius);font-family:var(--font-sans);font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+      .btn-ghost:hover{border-color:var(--green);color:var(--green)}
+      @media(max-width:768px){.hide-mobile{display:none!important}.show-mobile{display:flex!important}}
+      @media(min-width:769px){.show-mobile{display:none!important}}
     </style>
   </head>
   <body>

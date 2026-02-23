@@ -1,102 +1,65 @@
-# PredictEdge v5 — Full Platform
+# PredictEdge v6 — Complete Platform
 
-## Complete Feature Set
-- **Home** — Hero landing with stats, live picks preview, how-it-works, testimonials
-- **Free Tips** — Full prediction engine: football-data.org + The Odds API + FLE v1.0
-- **Results** — Track record with win/loss history, hit rates by strength level
-- **Leaderboard** — Community tipster rankings with podium, badges, profit tracking
-- **Daily Challenge** — Pick-5 gamified contest with AI hints and live countdown
-- **Pricing** — FREE / PRO (₦5,000/mo) / ELITE (₦12,000/mo) with feature matrix
+## What's New in v6
+- ✅ Full auth system — name + email signup, no password, no card
+- ✅ Personalised greeting & dashboard (My Picks page)
+- ✅ Save picks to profile (☆ Save button on every pick card)
+- ✅ Navigation via React Context — no prop drilling, zero broken buttons
+- ✅ Live scrolling ticker in nav bar
+- ✅ Mobile-responsive hamburger menu
+- ✅ All premiums marked "Coming Soon" — everything free for signups
+- ✅ Leaderboard shows user's position when logged in
+- ✅ Challenge requires login to submit (prompts signup gracefully)
+- ✅ Zero copied GreenPicks content — all original copy
 
----
-
-## Deploy to Vercel
+## Deploy to Vercel (30 seconds)
 
 ```bash
-# 1. Unzip, open folder, push to GitHub
-git init && git add . && git commit -m "PredictEdge v5"
-git remote add origin https://github.com/YOUR_USERNAME/predictedge.git
+# 1. Push to GitHub
+git init && git add . && git commit -m "PredictEdge v6"
+git remote add origin https://github.com/YOUR/predictedge.git
 git push -u origin main
 
-# 2. Import at vercel.com/new — auto-detects Vite
+# 2. vercel.com → New Project → Import your repo
+#    Framework: Vite (auto-detected)
 
-# 3. Add environment variables in Vercel:
-#    Settings → Environment Variables
-#    FOOTBALL_DATA_KEY = your key from football-data.org/client/register
-#    ODDS_API_KEY      = your key from the-odds-api.com
+# 3. Settings → Environment Variables → Add:
+FOOTBALL_DATA_KEY = your_key   # football-data.org/client/register
+ODDS_API_KEY      = your_key   # the-odds-api.com
 ```
 
----
+## Pages
+| Route  | Page         | Description |
+|--------|-------------|-------------|
+| home   | Home        | Hero, signal explainer, recent results, testimonials, CTA |
+| tips   | Free Tips   | Prediction engine: select leagues + markets → generate |
+| results| Results     | Full track record, filterable by outcome + strength |
+| leaderboard | Leaderboard | Community rankings with podium |
+| challenge | Challenge  | Daily pick-5 contest with AI hints + countdown |
+| saved  | My Picks    | Personal saved picks + user stats (auth required) |
+| pricing| Pricing     | Free now, Pro/Elite coming soon, FAQ |
 
-## API Keys
-
-| Variable | Source | Free Limit |
-|---|---|---|
-| `FOOTBALL_DATA_KEY` | football-data.org/client/register | 10 req/min · unlimited/day |
-| `ODDS_API_KEY` | the-odds-api.com | 500 req/month (30-min cache active) |
-
----
-
-## User Tiers
-
-Defined in `src/constants.js`. Currently uses localStorage for demo.
-To connect real payments:
-- **Paystack** (Nigeria): paystack.com — webhook updates user tier in DB
-- **Flutterwave**: flutterwave.com — same approach
-- **Supabase** (free): store users + tiers, fetch tier on app load
-
----
+## Auth System
+- `src/context/AuthContext.jsx` — signup/login, savedPicks, updateUser
+- Stored in `localStorage` under key `pe_user_v1`
+- `src/context/NavContext.jsx` — single source of truth for routing
+- Auth modal triggered globally via `setAuthModal(true)` from any component
 
 ## Prediction Engine (FLE v1.0)
-
 ```
-Layer 1: Season Stats (football-data.org standings)
-  → Poisson distribution on goals-for/against averages
-  → Expected goals → Over/BTTS probability
+Season stats (football-data.org)
+  → Poisson model → expected goals → Over/BTTS probability
 
-Layer 2: H2H Blend (Pro+)
-  → Historical over/btts rates from last 10 meetings
-  → 60% stats / 40% H2H weighted blend
-  → Conflict if gap > 18% → TRAP
+H2H cross-check (optional, when API live)
+  → 60% stats / 40% H2H blend
+  → Gap > 18% → conflict flag
 
-Layer 3: Odds Validation (The Odds API)
-  → Median implied probability across bookmakers
-  → Conflict if gap > 20% from model → TRAP
-  → Odds implied < 48% → automatic TRAP
-  → If no conflict: final = 70% model + 30% odds
+Odds validation (The Odds API, 30-min cached)
+  → Model vs market gap > 20% → TRAP
+  → Market implies < 48% → TRAP
+  → Clean: final = 70% model + 30% odds
 
-Strength Scale:
-  ≥90% → BANKER 🏆
-  85-89% → STRONG 💪
-  80-84% → SAFE 🛡
-  70-79% → MODERATE ⚖️
-  60-69% → RISKY ⚠️
-  <60% or conflict → TRAP 🚫
-```
-
----
-
-## Project Structure
-
-```
-api/
-  football/ competitions, fixtures, standings, h2h
-  odds/     odds (with 30-min cache)
-  results/  save, list, leaderboard
-  challenge/ submit
-
-src/
-  App.jsx            Router
-  constants.js       Tiers, markets, strength config
-  apiClient.js       All fetch calls
-  engines/fle.js     Prediction engine
-  components/
-    Layout.jsx       Nav + footer + tier switcher modal
-  pages/
-    HomePage.jsx     Landing + hero
-    TipsPage.jsx     Prediction generator
-    ResultsPage.jsx  Track record
-    LeaderboardPage  Community rankings
-    ChallengePage    Daily pick-5 contest
-    PricingPage      Plans + FAQ
+Strength scale:
+  ≥90% = BANKER 🏆 | 85-89% = STRONG ⚡ | 80-84% = SAFE 🛡
+  70-79% = MODERATE 📊 | 60-69% = RISKY ⚠️ | conflict = TRAP 🚫
 ```

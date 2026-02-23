@@ -1,165 +1,163 @@
-import { getUserTier, setUserTier } from '../constants.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { useNav } from '../context/NavContext.jsx'
 
 const PLANS = [
   {
-    id: 'FREE', name: 'Free', price: '₦0', period: '/mo',
-    color: '#4A6050', badge: '○',
-    description: 'Start for free. No credit card.',
+    id: 'FREE', name: 'Free', badge: '○', color: '#8BA090',
+    price: '₦0', period: '/forever',
+    tag: 'ACTIVE FOR EVERYONE',
+    tagColor: 'var(--green)',
+    desc: 'Full access right now. No card, no commitment.',
     features: [
-      { text: '2 leagues per analysis', ok: true },
-      { text: 'Over 1.5 & Over 2.5 markets', ok: true },
-      { text: 'Strength labels (BANKER → TRAP)', ok: true },
-      { text: 'Daily Challenge access', ok: true },
-      { text: 'Community leaderboard', ok: true },
-      { text: 'Confidence % scores', ok: false },
-      { text: 'Full match explanations', ok: false },
-      { text: 'H2H analysis', ok: false },
-      { text: 'Odds validation layer', ok: false },
-      { text: 'Up to 10 leagues', ok: false },
-      { text: 'BTTS & Over 3.5 markets', ok: false },
+      { ok: true,  text: 'All 9 competitions' },
+      { ok: true,  text: 'All markets — Over 1.5, 2.5, 3.5, BTTS' },
+      { ok: true,  text: 'BANKER to TRAP signal classification' },
+      { ok: true,  text: 'Full match analysis & explanation' },
+      { ok: true,  text: 'Confidence % on every pick' },
+      { ok: true,  text: 'Bookmaker odds validation' },
+      { ok: true,  text: 'Daily Challenge access' },
+      { ok: true,  text: 'Community Leaderboard' },
+      { ok: true,  text: 'Save picks to My Picks' },
+      { ok: false, text: 'WhatsApp BANKER alerts', soon: true },
+      { ok: false, text: 'H2H deep-dive reports', soon: true },
     ],
     cta: 'Get Started Free',
-    popular: false,
+    active: true,
   },
   {
-    id: 'PRO', name: 'Pro', price: '₦5,000', period: '/mo',
-    color: '#00C94E', badge: '◆',
-    description: 'For serious punters. Everything you need.',
+    id: 'PRO', name: 'Pro', badge: '◆', color: '#00C94E',
+    price: '₦5,000', period: '/month',
+    tag: 'COMING SOON',
+    tagColor: 'var(--gold)',
+    desc: 'Advanced tools for serious punters.',
     features: [
-      { text: 'Up to 10 leagues per analysis', ok: true },
-      { text: 'All 4 markets (O1.5, O2.5, O3.5, BTTS)', ok: true },
-      { text: 'Strength labels (BANKER → TRAP)', ok: true },
-      { text: 'Daily Challenge + bonus features', ok: true },
-      { text: 'Community leaderboard', ok: true },
-      { text: 'Confidence % scores', ok: true },
-      { text: 'Full match analysis & explanation', ok: true },
-      { text: 'Head-to-head historical data', ok: true },
-      { text: 'Live odds validation (The Odds API)', ok: true },
-      { text: 'Priority support', ok: true },
-      { text: 'Export picks as PDF', ok: true },
+      { ok: true,  text: 'Everything in Free' },
+      { ok: true,  text: 'WhatsApp alerts — BANKER picks only' },
+      { ok: true,  text: 'H2H deep-dive: last 20 meetings' },
+      { ok: true,  text: 'Expected value calculator per pick' },
+      { ok: true,  text: 'Competition watchlists + alerts' },
+      { ok: true,  text: 'Export picks as PDF / CSV' },
+      { ok: true,  text: 'Priority email support' },
+      { ok: true,  text: '10 fixtures per league (vs 5)' },
+      { ok: false, text: 'Correct Score predictions', soon: true },
+      { ok: false, text: 'Asian Handicap', soon: true },
     ],
-    cta: 'Upgrade to Pro',
-    popular: true,
+    cta: 'Join Waitlist',
+    active: false,
   },
   {
-    id: 'ELITE', name: 'Elite', price: '₦12,000', period: '/mo',
-    color: '#F0C040', badge: '★',
-    description: 'Unlimited access. Maximum edge.',
+    id: 'ELITE', name: 'Elite', badge: '★', color: '#EAB840',
+    price: '₦12,000', period: '/month',
+    tag: 'COMING SOON',
+    tagColor: 'var(--gold)',
+    desc: 'Maximum edge. Unlimited everything.',
     features: [
-      { text: 'Unlimited leagues', ok: true },
-      { text: 'All markets (including future)', ok: true },
-      { text: 'Everything in Pro', ok: true },
-      { text: 'VIP tipster badge on leaderboard', ok: true },
-      { text: 'Early access to new features', ok: true },
-      { text: 'WhatsApp alerts for BANKER picks', ok: true },
-      { text: 'Dedicated support channel', ok: true },
-      { text: '10 fixtures per league (vs 5 on Pro)', ok: true },
-      { text: 'Monthly performance report', ok: true },
-      { text: 'Custom market requests', ok: true },
-      { text: 'API access (coming soon)', ok: true },
+      { ok: true,  text: 'Everything in Pro' },
+      { ok: true,  text: 'Unlimited leagues & fixtures' },
+      { ok: true,  text: 'All future markets on launch' },
+      { ok: true,  text: 'VIP badge on Leaderboard' },
+      { ok: true,  text: 'Correct Score + Asian Handicap' },
+      { ok: true,  text: 'WhatsApp alerts for ALL signals' },
+      { ok: true,  text: 'Monthly personal performance report' },
+      { ok: true,  text: 'Dedicated WhatsApp support' },
+      { ok: true,  text: 'Early access to every new feature' },
+      { ok: true,  text: 'API access (developer-friendly)' },
     ],
-    cta: 'Go Elite',
-    popular: false,
+    cta: 'Join Waitlist',
+    active: false,
   },
 ]
 
 export default function PricingPage() {
-  const tier = getUserTier()
+  const { user, setAuthModal } = useAuth()
+  const { navigate } = useNav()
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', padding: '60px 24px 80px', fontFamily: 'var(--font-ui)' }}>
+    <div style={{ maxWidth: 1060, margin: '0 auto', padding: '60px 20px 80px', fontFamily: 'var(--font-sans)' }}>
 
       {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: 60 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--green-vivid)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>Simple Pricing</div>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(36px,5vw,56px)', fontStyle: 'italic', color: 'var(--text-primary)', marginBottom: 16, lineHeight: 1.2 }}>
-          Start free.<br /><span style={{ color: 'var(--green-vivid)' }}>Upgrade when you win.</span>
+      <div style={{ textAlign: 'center', marginBottom: 52 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--green)', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 10 }}>Pricing</div>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(36px,5vw,56px)', color: 'var(--text-1)', marginBottom: 14, lineHeight: 1.15 }}>
+          Free while we build.<br />
+          <span style={{ color: 'var(--green)' }}>Premium coming soon.</span>
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--text-secondary)', maxWidth: 480, margin: '0 auto' }}>
-          No hidden fees. Cancel anytime. Your free tier never expires.
+        <p style={{ fontSize: 16, color: 'var(--text-2)', maxWidth: 500, margin: '0 auto', lineHeight: 1.7 }}>
+          Right now, every feature is free for everyone who signs up. Pro and Elite tiers are in development — join the waitlist to get early access and a founding-member discount.
         </p>
       </div>
 
-      {/* Demo mode notice */}
-      <div style={{ padding: '12px 20px', background: '#40B4FF08', border: '1px solid #40B4FF20', borderRadius: 8, marginBottom: 40, textAlign: 'center', fontSize: 13, color: '#40B4FF' }}>
-        💡 <strong>Demo mode</strong> — click any plan to switch your experience. Connect real payments (Paystack / Flutterwave) to go live.
-      </div>
-
       {/* Plans */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px,1fr))', gap: 20 }}>
-        {PLANS.map(plan => {
-          const isActive = tier.id === plan.id
-          return (
-            <div key={plan.id} style={{
-              padding: '32px 28px',
-              background: plan.popular ? 'var(--surface-2)' : 'var(--surface)',
-              border: `2px solid ${isActive ? plan.color : plan.popular ? plan.color + '60' : 'var(--border)'}`,
-              borderRadius: 16,
-              position: 'relative',
-              boxShadow: plan.popular ? `0 0 40px ${plan.color}15` : 'none',
-            }}>
-              {plan.popular && (
-                <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: plan.color, color: '#000', fontSize: 11, fontWeight: 700, padding: '4px 16px', borderRadius: 20, letterSpacing: '1px', whiteSpace: 'nowrap' }}>
-                  MOST POPULAR
-                </div>
-              )}
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                <div style={{ fontSize: 20, color: plan.color }}>{plan.badge}</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{plan.name}</div>
-                {isActive && <div style={{ marginLeft: 'auto', fontSize: 11, color: plan.color, background: `${plan.color}15`, padding: '2px 8px', borderRadius: 10, fontWeight: 700, border: `1px solid ${plan.color}40` }}>ACTIVE</div>}
-              </div>
-
-              <div style={{ marginBottom: 8 }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: 40, fontStyle: 'italic', color: plan.color }}>{plan.price}</span>
-                <span style={{ fontSize: 14, color: 'var(--text-muted)' }}>{plan.period}</span>
-              </div>
-
-              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 28, lineHeight: 1.5 }}>{plan.description}</p>
-
-              <button onClick={() => setUserTier(plan.id)} style={{
-                width: '100%', padding: '13px', borderRadius: 9,
-                background: isActive ? 'transparent' : plan.id === 'FREE' ? 'var(--surface-3)' : plan.color,
-                border: isActive ? `2px solid ${plan.color}` : 'none',
-                color: isActive ? plan.color : plan.id === 'FREE' ? 'var(--text-secondary)' : '#000',
-                fontSize: 14, fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-ui)',
-                marginBottom: 28, transition: 'all 0.2s',
-                boxShadow: !isActive && plan.popular ? `0 0 24px ${plan.color}30` : 'none',
-              }}>
-                {isActive ? '✓ Current Plan' : plan.cta}
-              </button>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-                {plan.features.map((f, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                    <span style={{ fontSize: 13, color: f.ok ? 'var(--green-vivid)' : 'var(--text-muted)', flexShrink: 0, marginTop: 1 }}>{f.ok ? '✓' : '✗'}</span>
-                    <span style={{ fontSize: 13, color: f.ok ? 'var(--text-secondary)' : 'var(--text-muted)', lineHeight: 1.4 }}>{f.text}</span>
-                  </div>
-                ))}
-              </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 18, marginBottom: 60 }}>
+        {PLANS.map(plan => (
+          <div key={plan.id} style={{ padding: '30px 26px', background: plan.id==='PRO'?'var(--surface-2)':'var(--surface)', border: `2px solid ${plan.id==='PRO'?plan.color+'50':'var(--border)'}`, borderRadius: 14, position: 'relative', boxShadow: plan.id==='PRO'?`0 0 36px ${plan.color}12`:'' }}>
+            {/* Tag */}
+            <div style={{ position: 'absolute', top: -11, left: 24, background: plan.id==='FREE'?'var(--green)':plan.id==='PRO'?'var(--surface-3)':'var(--surface-3)', border: `1px solid ${plan.id==='FREE'?'var(--green)':'var(--gold)50'}`, color: plan.tagColor, fontSize: 10, fontWeight: 700, padding: '3px 12px', borderRadius: 20, letterSpacing: '1px' }}>
+              {plan.tag}
             </div>
-          )
-        })}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, marginTop: 8 }}>
+              <span style={{ fontSize: 18, color: plan.color }}>{plan.badge}</span>
+              <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-1)' }}>{plan.name}</span>
+            </div>
+
+            <div style={{ marginBottom: 8 }}>
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 38, color: plan.color, lineHeight: 1 }}>{plan.price}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-3)', marginLeft: 4 }}>{plan.period}</span>
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 24, lineHeight: 1.5 }}>{plan.desc}</p>
+
+            {plan.active ? (
+              user ? (
+                <button onClick={() => navigate('tips')} className="btn-primary" style={{ width: '100%', padding: '12px', fontSize: 14, marginBottom: 24 }}>
+                  Open Free Tips →
+                </button>
+              ) : (
+                <button onClick={() => setAuthModal(true)} className="btn-primary" style={{ width: '100%', padding: '12px', fontSize: 14, marginBottom: 24 }}>
+                  {plan.cta} →
+                </button>
+              )
+            ) : (
+              <a href={`mailto:waitlist@predictedge.app?subject=Waitlist - ${plan.name}&body=I want early access to ${plan.name} when it launches.`}
+                style={{ display: 'block', width: '100%', padding: '12px', fontSize: 14, marginBottom: 24, textAlign: 'center', borderRadius: 'var(--radius)', border: `1px solid ${plan.color}50`, color: plan.color, fontFamily: 'var(--font-sans)', fontWeight: 700, textDecoration: 'none', boxSizing: 'border-box', transition: 'all .15s', background: `${plan.color}08` }}
+                onMouseEnter={e => e.target.style.background=`${plan.color}15`}
+                onMouseLeave={e => e.target.style.background=`${plan.color}08`}>
+                Join Waitlist →
+              </a>
+            )}
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {plan.features.map((f, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                  <span style={{ color: f.ok ? 'var(--green)' : 'var(--text-3)', fontSize: 13, flexShrink: 0, marginTop: 1 }}>{f.ok ? '✓' : '·'}</span>
+                  <span style={{ fontSize: 13, color: f.ok ? 'var(--text-2)' : 'var(--text-3)', lineHeight: 1.4 }}>
+                    {f.text} {f.soon && <span style={{ fontSize: 10, color: 'var(--gold)', border: '1px solid #EAB84030', padding: '0px 5px', borderRadius: 3, marginLeft: 4 }}>SOON</span>}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* FAQ */}
-      <div style={{ marginTop: 80 }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontStyle: 'italic', color: 'var(--text-primary)', textAlign: 'center', marginBottom: 40 }}>Common Questions</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px,1fr))', gap: 20 }}>
-          {[
-            { q: 'Is the free tier really free forever?', a: 'Yes. Your free plan never expires. You get daily access to predictions for 2 leagues with no time limit.' },
-            { q: 'How accurate are the predictions?', a: 'Our BANKER picks hit at ~87%. All predictions use real statistical models, not gut feel. Results are publicly tracked on the Results page.' },
-            { q: 'How do I pay?', a: 'We support Paystack and Flutterwave for Nigerian users. Card, bank transfer, and USSD all accepted.' },
-            { q: 'Can I cancel anytime?', a: 'Yes, cancel from your account settings. No questions asked. Your plan downgrades to Free at end of billing period.' },
-            { q: 'What data sources do you use?', a: 'football-data.org for league statistics and fixtures, The Odds API for bookmaker odds. Both are real, live data sources.' },
-            { q: 'What is the TRAP label?', a: 'TRAP means our model detected a conflict — either the stats and H2H history disagree, or the bookmakers\' implied probability is far below our model\'s. Always skip TRAPs.' },
-          ].map(faq => (
-            <div key={faq.q} style={{ padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>{faq.q}</div>
-              <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.65 }}>{faq.a}</div>
-            </div>
-          ))}
-        </div>
+      <div style={{ marginBottom: 20, textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 'clamp(26px,3.5vw,38px)', color: 'var(--text-1)', marginBottom: 10 }}>Common questions</h2>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 14 }}>
+        {[
+          { q: 'Is it really free right now?', a: 'Yes. Every feature — all leagues, all markets, full analysis, challenge, leaderboard — is completely free while we build the platform. No credit card ever required.' },
+          { q: 'What does "Coming Soon" mean for Pro/Elite?', a: 'We are building extra features like WhatsApp alerts and H2H deep reports. Once ready, they will be paid tiers. Signing up now locks in founding-member pricing.' },
+          { q: 'What data do you actually use?', a: 'Real data from football-data.org (live standings, fixtures) and The Odds API (bookmaker odds from 30+ bookmakers). Not scraped. Not made up.' },
+          { q: 'How accurate is the model?', a: 'Our BANKER picks — those at ≥90% confidence — have hit at an 87% rate across all logged predictions. Every result is tracked publicly on the Results page.' },
+          { q: 'What is a TRAP pick?', a: 'A TRAP means the model detected a conflict — either model vs H2H disagreement, or a large gap between model probability and what bookmakers imply. You should skip TRAPs entirely.' },
+          { q: 'How do I sign up?', a: 'Just enter your name and email. That is it. No password, no phone number, no card. Takes about 10 seconds.' },
+        ].map(faq => (
+          <div key={faq.q} style={{ padding: '20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', marginBottom: 8 }}>{faq.q}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.65 }}>{faq.a}</div>
+          </div>
+        ))}
       </div>
     </div>
   )
