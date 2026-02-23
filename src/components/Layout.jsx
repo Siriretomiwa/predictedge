@@ -6,6 +6,7 @@ import { TICKER } from '../constants.js'
 const NAV = [
   { path:'home',        label:'Home'        },
   { path:'tips',        label:'Free Tips'   },
+  { path:'community',   label:'Community',  hot:true },
   { path:'results',     label:'Results'     },
   { path:'leaderboard', label:'Leaderboard' },
   { path:'challenge',   label:'Challenge',  live:true },
@@ -49,6 +50,7 @@ export default function Layout({ children }) {
               <button key={l.path} onClick={() => go(l.path)} style={{ background: page===l.path ? 'var(--green-dim)' : 'none', border:'none', borderRadius:7, padding:'6px 12px', fontFamily:'var(--font-sans)', fontSize:13, fontWeight:600, color: page===l.path ? 'var(--green)' : 'var(--text-2)', cursor:'pointer', transition:'all .15s', display:'flex', alignItems:'center', gap:5, whiteSpace:'nowrap' }}>
                 {l.label}
                 {l.live && <span style={{ fontSize:9, background:'var(--green-dark)', color:'var(--green)', padding:'1px 5px', borderRadius:3, letterSpacing:'0.5px' }}>LIVE</span>}
+                {l.hot  && <span style={{ fontSize:9, background:'#FF8C0018', color:'#FF8C00', padding:'1px 5px', borderRadius:3, letterSpacing:'0.5px' }}>HOT</span>}
               </button>
             ))}
           </div>
@@ -65,7 +67,7 @@ export default function Layout({ children }) {
                 {userMenuOpen && (
                   <div onClick={e => e.stopPropagation()} style={{ position:'absolute', top:'calc(100% + 8px)', right:0, background:'var(--surface-2)', border:'1px solid var(--border-hi)', borderRadius:10, padding:8, minWidth:160, zIndex:300, animation:'fadeUp .15s ease', boxShadow:'0 8px 32px rgba(0,0,0,.5)' }}>
                     <div style={{ padding:'6px 10px', fontSize:12, color:'var(--text-3)', borderBottom:'1px solid var(--border)', marginBottom:4 }}>{user.email}</div>
-                    {[['My Picks','saved'],['Results','results'],['Challenge','challenge']].map(([l,p]) => (
+                    {[['My Picks','saved'],['Community','community'],['Results','results'],['Challenge','challenge']].map(([l,p]) => (
                       <button key={p} onClick={() => { go(p); setUserMenuOpen(false) }} style={{ display:'block', width:'100%', textAlign:'left', padding:'8px 10px', background:'none', border:'none', color:'var(--text-2)', fontSize:13, cursor:'pointer', fontFamily:'var(--font-sans)', borderRadius:6, transition:'all .1s' }}>{l}</button>
                     ))}
                     <div style={{ borderTop:'1px solid var(--border)', marginTop:4, paddingTop:4 }}>
@@ -122,7 +124,7 @@ export default function Layout({ children }) {
               <div style={{ marginTop:16, fontSize:11, color:'var(--text-3)' }}>Powered by football-data.org + The Odds API</div>
             </div>
             {[
-              { title:'Platform', links:[['Free Tips','tips'],['Results','results'],['Leaderboard','leaderboard'],['Daily Challenge','challenge']] },
+              { title:'Platform', links:[['Free Tips','tips'],['Community','community'],['Results','results'],['Leaderboard','leaderboard'],['Daily Challenge','challenge']] },
               { title:'Account',  links:[['Sign Up','home'],['Log In','home'],['My Picks','saved'],['Pricing','pricing']] },
               { title:'Contact',  links:[['WhatsApp','#'],['Email Us','#'],['FAQ','#']] },
             ].map(col => (

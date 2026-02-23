@@ -9,6 +9,7 @@ import LeaderboardPage from './pages/LeaderboardPage.jsx'
 import ChallengePage from './pages/ChallengePage.jsx'
 import SavedPage from './pages/SavedPage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
+import CommunityPage from './pages/CommunityPage.jsx'
 
 function Pages() {
   const { page } = useNav()
@@ -19,6 +20,7 @@ function Pages() {
     results:     <ResultsPage />,
     leaderboard: <LeaderboardPage />,
     challenge:   <ChallengePage />,
+    community:   <CommunityPage />,
     saved:       <SavedPage />,
     pricing:     <PricingPage />,
   }
