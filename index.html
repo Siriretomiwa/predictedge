@@ -3,13 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PredictEdge – Multi-Sport Analytics</title>
+    <title>PredictEdge — AI Sports Intelligence</title>
+    <meta name="description" content="AI-powered football predictions backed by real data. BANKER picks, odds validation, and live results tracking." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #080B12; }
+      html { scroll-behavior: smooth; }
+      body { background: #060A07; color: #E8EDE9; font-family: 'Syne', sans-serif; -webkit-font-smoothing: antialiased; }
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: #060A07; }
+      ::-webkit-scrollbar-thumb { background: #1A2E1D; border-radius: 3px; }
+
+      :root {
+        --green-vivid: #00FF6A;
+        --green-mid: #00C94E;
+        --green-dark: #006B28;
+        --green-deep: #0A1F0D;
+        --green-muted: #1A3320;
+        --obsidian: #060A07;
+        --surface: #0D1710;
+        --surface-2: #131F16;
+        --surface-3: #1A2B1E;
+        --border: #1E2F21;
+        --border-bright: #2A4030;
+        --text-primary: #E8EDE9;
+        --text-secondary: #8FA896;
+        --text-muted: #4A6050;
+        --gold: #F0C040;
+        --red: #FF3B3B;
+        --blue: #40B4FF;
+        --font-display: 'Instrument Serif', serif;
+        --font-ui: 'Syne', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+      }
+
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+      @keyframes slide-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
     </style>
   </head>
   <body>
